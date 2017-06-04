@@ -42,8 +42,15 @@ static inline void gon_http_parser_compactBuffer(struct gon_http_parser* parser)
     parser->token = parser->buffer;
 }
 
-static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, void* args[]) {
-    while(parser->bufferOffset < parser->bufferSize) {
+static inline bool gon_http_parser_canProceed(struct gon_http_parser* parser) {
+   if(parser->state < GON_HTTP_PARSER_BODY_BEGIN)
+        return parser->bufferOffset < parser->bufferSize;
+   return parser->bodyRemainder > 0 && parser->bufferSize > 0;
+}
+
+int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
+    parser->bufferSize += readSize;
+    while(parser->canProceed(parser)) {
         switch(parser->state) {
         case GON_HTTP_PARSER_HEADERS_BEGIN:
             parser->onRequestStart(args);
@@ -236,43 +243,25 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
                 GON_HTTP_PARSER_ERROR;
             }
             break;
-        default:
-            GON_HTTP_PARSER_ERROR;
-        }
-    }
-
-    if(parser->headerBufferCapacity - parser->tokenOffset == 0) {
-        warnx("%s: %u: A token is bigger than http_buffer", __FILE__, __LINE__);
-        GON_HTTP_PARSER_ERROR;
-    }
-    gon_http_parser_compactBuffer(parser);
-    parser->bufferSize = parser->tokenOffset;
-    return 1;
-}
-
-static inline int gon_http_parser_parseBody(struct gon_http_parser* parser, void* args[]) {
-    if(parser->state == GON_HTTP_PARSER_BODY_BEGIN) {
-        if(parser->bodyRemainder == 0) {
-           if(parser->onRequestFinish(args) == -1) {
-               GON_HTTP_PARSER_ERROR;
-           }
-           parser->bufferSize -= parser->bufferOffset;
-           return 0;
-        } else if(parser->bufferSize - parser->bufferOffset > parser->bodyBufferCapacity) {
-            GON_HTTP_PARSER_ERROR;
-        } else {
-            memmove(parser->buffer, parser->buffer + parser->bufferOffset, (parser->bufferSize - parser->bufferOffset) * sizeof(char));
-            parser->buffer = realloc(parser->buffer, parser->bodyBufferCapacity * sizeof(char));
-            parser->bufferSize -= parser->bufferOffset;
-            parser->bufferOffset = 0;
-            if(parser->onRequestBodyStart(args) == -1) {
+        case GON_HTTP_PARSER_BODY_BEGIN:
+            if(parser->bodyRemainder == 0) {
+                if(parser->onRequestFinish(args) == -1) {
+                    GON_HTTP_PARSER_ERROR;
+                }
+                parser->bufferSize -= parser->bufferOffset;
+                return 0;
+            } else if(parser->bufferSize - parser->bufferOffset > parser->bodyBufferCapacity) {
                 GON_HTTP_PARSER_ERROR;
+            } else {
+                memmove(parser->buffer, parser->buffer + parser->bufferOffset, (parser->bufferSize - parser->bufferOffset) * sizeof(char));
+                parser->buffer = realloc(parser->buffer, parser->bodyBufferCapacity * sizeof(char));
+                parser->bufferSize -= parser->bufferOffset;
+                parser->bufferOffset = 0;
+                if(parser->onRequestBodyStart(args) == -1) {
+                    GON_HTTP_PARSER_ERROR;
+                }
+                parser->state = GON_HTTP_PARSER_BODY;
             }
-            parser->state = GON_HTTP_PARSER_BODY;
-        }
-    }
-    while(parser->bodyRemainder > 0 && parser->bufferSize > 0) {
-        switch(parser->state) {
         case GON_HTTP_PARSER_BODY:
             if(parser->bufferSize < parser->bodyRemainder) {
                 if(parser->onRequestBody(parser->buffer, parser->bufferSize, args) == -1) {
@@ -289,26 +278,24 @@ static inline int gon_http_parser_parseBody(struct gon_http_parser* parser, void
                 parser->state = GON_HTTP_PARSER_BODY_END;
             }
 	break;
+        case GON_HTTP_PARSER_BODY_END:
+            if(parser->onRequestBodyFinish(args) == -1) {
+                GON_HTTP_PARSER_ERROR;
+            }
+            if(parser->onRequestFinish(args) == -1) {
+                GON_HTTP_PARSER_ERROR;
+            }
+            return 0;
         default:
             GON_HTTP_PARSER_ERROR;
         }
     }
-    if(parser->state == GON_HTTP_PARSER_BODY_END) {
-        if(parser->onRequestBodyFinish(args) == -1) {
-            GON_HTTP_PARSER_ERROR;
-        }
-        if(parser->onRequestFinish(args) == -1) {
-            GON_HTTP_PARSER_ERROR;
-        }
-        return 0;
-    }
-    return 1;
-}
 
-int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void* args[]) {
-    parser->bufferSize += readSize;
-    int result;
-    if(parser->state < GON_HTTP_PARSER_BODY_BEGIN && (result = gon_http_parser_parseHeaders(parser, args)) != 0)
-        return result;
-    return gon_http_parser_parseBody(parser, args);
+    if(parser->headerBufferCapacity - parser->tokenOffset == 0) {
+        warnx("%s: %u: A token is bigger than http_buffer", __FILE__, __LINE__);
+        GON_HTTP_PARSER_ERROR;
+    }
+    gon_http_parser_compactBuffer(parser);
+    parser->bufferSize = parser->tokenOffset;
+    return 1;
 }
