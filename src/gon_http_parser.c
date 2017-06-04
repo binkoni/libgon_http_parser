@@ -249,6 +249,8 @@ int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
                 parser->buffer = realloc(parser->buffer, parser->bodyBufferCapacity * sizeof(char));
                 parser->bufferSize -= parser->bufferOffset;
                 parser->bufferOffset = 0;
+                parser->token = parser->buffer;
+                parser->tokenOffset = 0;
                 if(parser->onRequestBodyStart(args) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 }
@@ -263,12 +265,14 @@ int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
                     GON_HTTP_PARSER_ERROR;
                 }
                 parser->bodyRemainder -= parser->bufferSize;
+                parser->bufferOffset += parser->bufferSize - 1;
                 parser->bufferSize = 0;
             } else {
                 if(parser->onRequestBody(parser->buffer, parser->bodyRemainder, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 }
                 parser->bufferSize -= parser->bodyRemainder;
+                parser->bufferOffset += parser->bodyRemainder - 1;
                 parser->bodyRemainder = 0;
                 parser->state = GON_HTTP_PARSER_BODY_END;
             }
