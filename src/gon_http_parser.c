@@ -39,6 +39,7 @@ static inline void gon_http_parser_prepareForNextToken(struct gon_http_parser* p
 static inline void gon_http_parser_compactBuffer(struct gon_http_parser* parser) {
     memmove(parser->buffer, parser->token, parser->tokenOffset * sizeof(char));
     parser->bufferOffset = parser->tokenOffset;
+    parser->bufferSize = parser->tokenOffset;
     parser->token = parser->buffer;
 }
 
@@ -240,13 +241,11 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
             GON_HTTP_PARSER_ERROR;
         }
     }
-
     if(parser->headerBufferCapacity - parser->tokenOffset == 0) {
         warnx("%s: %u: A token is bigger than http_buffer", __FILE__, __LINE__);
         GON_HTTP_PARSER_ERROR;
     }
     gon_http_parser_compactBuffer(parser);
-    parser->bufferSize = parser->tokenOffset;
     return 1;
 }
 
