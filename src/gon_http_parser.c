@@ -247,8 +247,7 @@ static inline int gon_http_parser_parseBody(struct gon_http_parser* parser, void
         if(parser->bodyRemainder == 0) {
             if(parser->onRequestFinish(args) == -1)
                 return -1;
-            else
-                return 0;
+            return 0;
         } else {
             if(parser->bodyBufferCapacity < parser->bodyRemainder) {
                 warnx("%s: %u: Request body is bigger than parser body buffer", __FILE__, __LINE__);
@@ -262,8 +261,7 @@ static inline int gon_http_parser_parseBody(struct gon_http_parser* parser, void
                 parser->bufferOffset = 0;
                 if(parser->onRequestBodyStart(args) == -1)
                     return -1;
-                else
-                    parser->state = GON_HTTP_PARSER_BODY;
+                parser->state = GON_HTTP_PARSER_BODY;
             }
         }
     }
@@ -274,29 +272,21 @@ static inline int gon_http_parser_parseBody(struct gon_http_parser* parser, void
             if(parser->bufferSize < parser->bodyRemainder) {
                 if(parser->onRequestBody(parser->buffer, parser->bufferSize, args) == -1)
                     return -1;
-                else {
-                    parser->bodyRemainder -= parser->bufferSize;
-                    parser->bufferSize = 0;
-                }
-            }
-            else if(parser->bufferSize >= parser->bodyRemainder)
+                parser->bodyRemainder -= parser->bufferSize;
+                parser->bufferSize = 0;
+            } else if(parser->bufferSize >= parser->bodyRemainder) {
+                if(parser->onRequestBody(parser->buffer, parser->bufferSize, args) == -1)
+                    return -1;
+                parser->bufferSize = 0;
                 parser->state = GON_HTTP_PARSER_BODY_END;
+            }
             break;
         case GON_HTTP_PARSER_BODY_END:
-            if(parser->onRequestBody(parser->buffer, parser->bufferSize, args) == -1)
+            if(parser->onRequestBodyFinish(args) == -1)
                 return -1;
-            else {
-                parser->bufferSize = 0;
-                if(parser->onRequestBodyFinish(args) == -1)
-                    return -1;
-                else {
-                    if(parser->onRequestFinish(args) == -1)
-                        return -1;
-                    else
-                        return 0;
-                }
-            }
-            break;
+            if(parser->onRequestFinish(args) == -1)
+                return -1;
+            return 0;
         default:
             return -1;
         }
