@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <libgonc/gonc_cast.h>
-#include <libgonc/gonc_nstrncasecmp.h>
-#include <libgonc/gonc_nstrtoi.h>
+#include <libgon_c/gon_c_nstrncasecmp.h>
+#include <libgon_c/gon_c_nstrtoi.h>
 #include "gon_http_parser.h"
 
 static inline char* gon_http_parser_getBufferPosition(struct gon_http_parser* parser) {
@@ -124,13 +123,13 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
             if(parser->buffer[parser->bufferOffset] == ' ')
                 ++parser->bufferOffset;
             else {
-                if(gonc_nstrncasecmp(parser->token, parser->tokenOffset, "X-Script-Name", sizeof("X-Script-Name") - 1) == 0) {
+                if(gon_c_nstrncasecmp(parser->token, parser->tokenOffset, "X-Script-Name", sizeof("X-Script-Name") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_SCRIPT_PATH;            
-                } else if(gonc_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Type", sizeof("Content-Type") - 1) == 0) {
+                } else if(gon_c_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Type", sizeof("Content-Type") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_CONTENT_TYPE;            
-                } else if(gonc_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Length", sizeof("Content-Length") - 1) == 0) {
+                } else if(gon_c_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Length", sizeof("Content-Length") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_CONTENT_LENGTH;            
                 } else if(parser->onRequestHeaderField(parser->token, parser->tokenOffset, args) == -1)
@@ -192,7 +191,7 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
                 if(parser->onRequestContentLength(parser->token, parser->tokenOffset, args) == -1)
                     return -1;
                 else {
-                    if((parser->contentLength = gonc_nstrtoi(parser->token, parser->tokenOffset + 1)) == -1)
+                    if((parser->contentLength = gon_c_nstrtoi(parser->token, parser->tokenOffset + 1)) == -1)
                         return -1;
                     else 
                         parser->state = GON_HTTP_PARSER_HEADER_FIELD_BEGIN;
