@@ -1,0 +1,2 @@
+sudo gcc src/gon_http_parser.c -o /usr/local/lib/gon_http_parser.so -std=gnu99 -fPIC -shared -g
+sudo cp src/gon_http_parser.h /usr/local/include/
