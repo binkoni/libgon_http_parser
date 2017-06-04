@@ -32,7 +32,6 @@ enum gon_http_parser_state {
 
 struct gon_http_parser {
     enum gon_http_parser_state state;
-    int (*parse)(struct gon_http_parser*, ssize_t readSize);
     size_t headerBufferCapacity;
     size_t bodyBufferCapacity;
     char* buffer;
@@ -41,7 +40,6 @@ struct gon_http_parser {
     char* token;
     size_t tokenOffset;
     ssize_t bodyRemainder;
-    ssize_t contentLength;
 
     int (*onRequestStart)(void* args[]);
     int (*onRequestMethod)(char*, ssize_t, void* args[]);
@@ -77,7 +75,6 @@ static inline int gon_http_parser_reset(struct gon_http_parser* parser) {
     parser->state = GON_HTTP_PARSER_HEADERS_BEGIN;
     parser->buffer = realloc(parser->buffer, parser->headerBufferCapacity * sizeof(char)); 
     parser->bufferOffset = 0;
-    parser->bufferSize = 0;
     parser->token = parser->buffer;
     parser->tokenOffset = 0; 
     parser->bodyRemainder = 0;
