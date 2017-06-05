@@ -89,7 +89,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
         case GON_HTTP_PARSER_REQUEST_URI_END:
             if(parser->onRequestUri(parser->token, parser->tokenOffset, args) == -1) {
                 GON_HTTP_PARSER_ERROR;
-	    } else {
+            } else {
                 gon_http_parser_prepareForNextToken(parser);
                 parser->state = GON_HTTP_PARSER_PROTOCOL;
             }
@@ -108,7 +108,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
                 ++parser->bufferOffset;
                 if(parser->onRequestProtocol(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
-	        } else
+                } else
                     parser->state = GON_HTTP_PARSER_HEADER_FIELD_BEGIN;
             } else {
                 GON_HTTP_PARSER_ERROR;
@@ -147,7 +147,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
                     parser->state = GON_HTTP_PARSER_CONTENT_LENGTH;            
                 } else if(parser->onRequestHeaderField(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
-		} else {
+                } else {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_HEADER_VALUE;
                 }
@@ -167,7 +167,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
                 ++parser->bufferOffset;
                 if(parser->onRequestScriptPath(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
-		}
+                }
                 parser->state = GON_HTTP_PARSER_HEADER_FIELD_BEGIN;
             }
             break;
@@ -276,7 +276,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, void* args[]) {
                 parser->bodyRemainder = 0;
                 parser->state = GON_HTTP_PARSER_BODY_END;
             }
-	break;
+        break;
         case GON_HTTP_PARSER_BODY_END:
             if(parser->onRequestBodyFinish(args) == -1) {
                 GON_HTTP_PARSER_ERROR;
