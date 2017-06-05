@@ -284,7 +284,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
         }
     }
     if(parser->headerBufferCapacity - parser->tokenOffset == 0) {
-        warnx("%s: %u: A token is bigger than http_buffer", __FILE__, __LINE__);
+        warnx("%s: %u: A header is bigger than the header buffer", __FILE__, __LINE__);
         GON_HTTP_PARSER_ERROR;
     }
     gon_http_parser_compactBuffer(parser);
