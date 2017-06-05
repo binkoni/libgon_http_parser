@@ -11,11 +11,11 @@
     warnx("%s: %u: Parser error", __FILE__, __LINE__); \
     return -1;
 
-static inline char* gon_http_parser_getBufferPosition(struct gon_http_parser* parser) {
+char* gon_http_parser_getBufferPosition(struct gon_http_parser* parser) {
     return parser->buffer + parser->bufferOffset;
 }
 
-static inline size_t gon_http_parser_getAvailableBufferSize(struct gon_http_parser* parser) {
+size_t gon_http_parser_getAvailableBufferSize(struct gon_http_parser* parser) {
     return parser->headerBufferCapacity - parser->bufferSize;
 }
 

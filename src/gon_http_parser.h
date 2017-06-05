@@ -79,6 +79,8 @@ static inline int gon_http_parser_reset(struct gon_http_parser* parser) {
     return 0;
 }
 
+char* gon_http_parser_getBufferPosition(struct gon_http_parser* parser);
+size_t gon_http_parser_getAvailableBufferSize(struct gon_http_parser* parser);
 int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void* args[]);
 
 #endif
