@@ -26,7 +26,6 @@ enum gon_http_parser_state {
     GON_HTTP_PARSER_HEADER_VALUE_END,
     GON_HTTP_PARSER_HEADERS_END,
     GON_HTTP_PARSER_BODY,
-    GON_HTTP_PARSER_BODY_END,
 };
 
 struct gon_http_parser {
