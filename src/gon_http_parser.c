@@ -82,7 +82,7 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
         case GON_HTTP_PARSER_REQUEST_URI_END:
             if(parser->onRequestUri(parser->token, parser->tokenOffset, args) == -1) {
                 GON_HTTP_PARSER_ERROR;
-	    } else {
+            } else {
                 gon_http_parser_prepareForNextToken(parser);
                 parser->state = GON_HTTP_PARSER_PROTOCOL;
             }
@@ -101,7 +101,7 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
                 ++parser->bufferOffset;
                 if(parser->onRequestProtocol(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
-	        } else
+                } else
                     parser->state = GON_HTTP_PARSER_HEADER_FIELD_BEGIN;
             } else {
                 GON_HTTP_PARSER_ERROR;
@@ -140,7 +140,7 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
                     parser->state = GON_HTTP_PARSER_CONTENT_LENGTH;            
                 } else if(parser->onRequestHeaderField(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
-		} else {
+                } else {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_HEADER_VALUE;
                 }
@@ -160,7 +160,7 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
                 ++parser->bufferOffset;
                 if(parser->onRequestScriptPath(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
-		}
+                }
                 parser->state = GON_HTTP_PARSER_HEADER_FIELD_BEGIN;
             }
             break;
@@ -232,7 +232,7 @@ static inline int gon_http_parser_parseHeaders(struct gon_http_parser* parser, v
                     GON_HTTP_PARSER_ERROR;
                 }
                 parser->state = GON_HTTP_PARSER_BODY_BEGIN;
-		return 0;
+                return 0;
             } else {
                 GON_HTTP_PARSER_ERROR;
             }
@@ -287,7 +287,7 @@ static inline int gon_http_parser_parseBody(struct gon_http_parser* parser, void
                 parser->bodyRemainder = 0;
                 parser->state = GON_HTTP_PARSER_BODY_END;
             }
-	break;
+        break;
         default:
             GON_HTTP_PARSER_ERROR;
         }
