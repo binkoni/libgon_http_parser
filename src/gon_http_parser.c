@@ -19,15 +19,6 @@ static inline size_t gon_http_parser_getAvailableBufferSize(struct gon_http_pars
     return parser->headerBufferCapacity - parser->bufferSize;
 }
 
-int gon_http_parser_read(struct gon_http_parser* parser, int* clientSocket) {
-warnx(__FUNCTION__);
-    return read(
-        *clientSocket,
-        gon_http_parser_getBufferPosition(parser),
-        gon_http_parser_getAvailableBufferSize(parser)
-    );
-}
-
 static inline void gon_http_parser_prepareForNextToken(struct gon_http_parser* parser) {
     parser->tokenOffset = 0;                                                                                                                                                     
     parser->token = parser->buffer + parser->bufferOffset;                                                                                                                       

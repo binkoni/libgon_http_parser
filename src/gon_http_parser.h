@@ -79,8 +79,6 @@ static inline int gon_http_parser_reset(struct gon_http_parser* parser) {
     return 0;
 }
 
-int gon_http_parser_read(struct gon_http_parser* parser, int* clientSocket);
-
 int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void* args[]);
 
 #endif
