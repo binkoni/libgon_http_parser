@@ -53,7 +53,6 @@ struct gon_http_parser {
     int (*onRequestBodyStart)(void* args[]);
     int (*onRequestBody)(char*, ssize_t, void* args[]);
     int (*onRequestBodyFinish)(void* args[]);
-    int (*onRequestFinish)(void* args[]);
 };
 
 static inline int gon_http_parser_init(struct gon_http_parser* parser, size_t headerBufferCapacity, size_t bodyBufferCapacity) {

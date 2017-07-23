@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <libgon_c/gon_c_nstrncasecmp.h>
-#include <libgon_c/gon_c_nstrtoi.h>
+#include <libgenc/genc_nstrncasecmp.h>
+#include <libgenc/genc_nstrtoi.h>
 #include "gon_http_parser.h"
 
 #define GON_HTTP_PARSER_ERROR                          \
@@ -123,13 +123,13 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
             if(parser->buffer[parser->bufferOffset] == ' ')
                 ++parser->bufferOffset;
             else {
-                if(gon_c_nstrncasecmp(parser->token, parser->tokenOffset, "X-Script-Name", sizeof("X-Script-Name") - 1) == 0) {
+                if(genc_nstrncasecmp(parser->token, parser->tokenOffset, "X-Script-Name", sizeof("X-Script-Name") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_SCRIPT_PATH;            
-                } else if(gon_c_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Type", sizeof("Content-Type") - 1) == 0) {
+                } else if(genc_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Type", sizeof("Content-Type") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_CONTENT_TYPE;            
-                } else if(gon_c_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Length", sizeof("Content-Length") - 1) == 0) {
+                } else if(genc_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Length", sizeof("Content-Length") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_CONTENT_LENGTH;            
                 } else if(parser->onRequestHeaderField(parser->token, parser->tokenOffset, args) == -1) {
@@ -191,7 +191,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
                 if(parser->onRequestContentLength(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 }
-                if((parser->bodyRemainder = gon_c_nstrtoi(parser->token, parser->tokenOffset)) == -1) {
+                if((parser->bodyRemainder = genc_nstrtoi(parser->token, parser->tokenOffset)) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 }
                 if(parser->bodyBufferCapacity < parser->bodyRemainder) {
@@ -226,9 +226,6 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
                     GON_HTTP_PARSER_ERROR;
                 }
                 if(parser->bodyRemainder == 0) {
-                    if(parser->onRequestFinish(args) == -1) {
-                        GON_HTTP_PARSER_ERROR;
-                    }
                     parser->bufferSize -= parser->bufferOffset;
                     return 0;
                 }
@@ -262,9 +259,6 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
                 parser->bodyRemainder -= parser->bufferOffset;
                 gon_http_parser_prepareForNextToken(parser);
                 if(parser->onRequestBodyFinish(args) == -1) {
-                    GON_HTTP_PARSER_ERROR;
-                }
-                if(parser->onRequestFinish(args) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 }
                 return 0;
