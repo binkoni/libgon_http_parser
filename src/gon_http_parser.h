@@ -38,7 +38,10 @@ struct gon_http_parser {
     char* token;
     size_t tokenOffset;
     ssize_t bodyRemainder;
+    struct gon_http_parser_callbacks* callbacks;
+};
 
+struct gon_http_parser_callbacks {
     int (*onRequestStart)(void* args[]);
     int (*onRequestMethod)(char*, ssize_t, void* args[]);
     int (*onRequestUri)(char*, ssize_t, void* args[]);
@@ -46,7 +49,6 @@ struct gon_http_parser {
     int (*onRequestScriptPath)(char*, ssize_t, void* args[]);
     int (*onRequestContentType)(char*, ssize_t, void* args[]);
     int (*onRequestContentLength)(char*, ssize_t, void* args[]);
-
     int (*onRequestHeaderField)(char*, ssize_t, void* args[]);
     int (*onRequestHeaderValue)(char*, ssize_t, void* args[]);
     int (*onRequestHeadersFinish)(void* args[]);
