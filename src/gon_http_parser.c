@@ -25,7 +25,6 @@ static inline void gon_http_parser_prepareForNextToken(struct gon_http_parser* p
 }
 
 static inline void gon_http_parser_compactBuffer(struct gon_http_parser* parser) {
-warnx(__FUNCTION__);
     memmove(parser->buffer, parser->token, parser->tokenOffset * sizeof(char));
     parser->token = parser->buffer;
     parser->bufferOffset = parser->tokenOffset; 
@@ -78,22 +77,53 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
                 GON_HTTP_PARSER_ERROR;
             } else {
                 gon_http_parser_prepareForNextToken(parser);
-                parser->state = GON_HTTP_PARSER_PROTOCOL;
+                parser->state = GON_HTTP_PARSER_HTTP_VERSION_HTTP;
             }
             break;
-        case GON_HTTP_PARSER_PROTOCOL:
-            if(parser->buffer[parser->bufferOffset] == '\r') {
+	case GON_HTTP_PARSER_HTTP_VERSION_HTTP:
+	    if(parser->buffer[parser->bufferOffset] == '/') {
                 ++parser->bufferOffset;
-                parser->state = GON_HTTP_PARSER_PROTOCOL_END;
-            } else {
+		gon_http_parser_prepareForNextToken(parser);
+		parser->state = GON_HTTP_PARSER_HTTP_VERSION_MAJOR;
+	    } else {
+                ++parser->bufferOffset;
+	    }
+	    break;
+        case GON_HTTP_PARSER_HTTP_VERSION_MAJOR:
+            if(parser->buffer[parser->bufferOffset] == '.') {
+                ++parser->bufferOffset;
+		if(parser->tokenOffset == 0) {
+		    GON_HTTP_PARSER_ERROR;
+		} else if(parser->callbacks->onRequestVersionMajor(genc_nstrtoi(parser->token, parser->tokenOffset), args) == -1) {
+                    GON_HTTP_PARSER_ERROR;
+		} else {
+		    gon_http_parser_prepareForNextToken(parser);
+		    parser->state = GON_HTTP_PARSER_HTTP_VERSION_MINOR;
+		}
+            } else if('0' <= parser->buffer[parser->bufferOffset] && parser->buffer[parser->bufferOffset] <= '9') {
                 ++parser->tokenOffset;
                 ++parser->bufferOffset;
-            }
+            } else {
+                GON_HTTP_PARSER_ERROR;
+	    }
             break;
-        case GON_HTTP_PARSER_PROTOCOL_END:
+	case GON_HTTP_PARSER_HTTP_VERSION_MINOR:
+	    if(parser->buffer[parser->bufferOffset] == '\r') {
+                ++parser->bufferOffset;
+		parser->state = GON_HTTP_PARSER_HTTP_VERSION_END;
+	    } else if('0' <= parser->buffer[parser->bufferOffset] && parser->buffer[parser->bufferOffset] <= '9') {
+                ++parser->tokenOffset;
+                ++parser->bufferOffset;
+            } else {
+                GON_HTTP_PARSER_ERROR;
+	    }
+	    break;
+        case GON_HTTP_PARSER_HTTP_VERSION_END:
             if(parser->buffer[parser->bufferOffset] == '\n') {
                 ++parser->bufferOffset;
-                if(parser->callbacks->onRequestProtocol(parser->token, parser->tokenOffset, args) == -1) {
+		if(parser->tokenOffset == 0) {
+                    GON_HTTP_PARSER_ERROR;
+		} else if(parser->callbacks->onRequestVersionMinor(genc_nstrtoi(parser->token, parser->tokenOffset), args) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 } else
                     parser->state = GON_HTTP_PARSER_HEADER_FIELD_BEGIN;
