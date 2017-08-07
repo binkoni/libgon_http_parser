@@ -1,0 +1,5 @@
+project(libgon_http_parser)
+enable_testing()
+set(CMAKE_BUILD_TYPE Debug)
+add_subdirectory(src)
+add_subdirectory(test)
