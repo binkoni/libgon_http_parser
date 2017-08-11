@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <libgenc/genc_nstrncasecmp.h>
+#include <libgenc/genc_caseCompareNStr.h>
 #include <libgenc/genc_nStrToInt.h>
 #include "gon_http_parser.h"
 
@@ -153,13 +153,13 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
             if(parser->buffer[parser->bufferOffset] == ' ')
                 ++parser->bufferOffset;
             else {
-                if(genc_nstrncasecmp(parser->token, parser->tokenOffset, "X-Script-Name", sizeof("X-Script-Name") - 1) == 0) {
+                if(genc_caseCompareNStr(parser->token, parser->tokenOffset, "X-Script-Name", sizeof("X-Script-Name") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_SCRIPT_PATH;            
-                } else if(genc_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Type", sizeof("Content-Type") - 1) == 0) {
+                } else if(genc_caseCompareNStr(parser->token, parser->tokenOffset, "Content-Type", sizeof("Content-Type") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_CONTENT_TYPE;            
-                } else if(genc_nstrncasecmp(parser->token, parser->tokenOffset, "Content-Length", sizeof("Content-Length") - 1) == 0) {
+                } else if(genc_caseCompareNStr(parser->token, parser->tokenOffset, "Content-Length", sizeof("Content-Length") - 1) == 0) {
                     gon_http_parser_prepareForNextToken(parser);
                     parser->state = GON_HTTP_PARSER_CONTENT_LENGTH;            
                 } else if(parser->callbacks->onRequestHeaderField(parser->token, parser->tokenOffset, args) == -1) {
