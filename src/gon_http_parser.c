@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <libgenc/genc_nstrncasecmp.h>
-#include <libgenc/genc_nstrtoi.h>
+#include <libgenc/genc_nStrToInt.h>
 #include "gon_http_parser.h"
 
 #define GON_HTTP_PARSER_ERROR                          \
@@ -94,7 +94,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
                 ++parser->bufferOffset;
 		if(parser->tokenOffset == 0) {
 		    GON_HTTP_PARSER_ERROR;
-		} else if(parser->callbacks->onRequestVersionMajor(genc_nstrtoi(parser->token, parser->tokenOffset), args) == -1) {
+		} else if(parser->callbacks->onRequestVersionMajor(genc_nStrToInt(parser->token, parser->tokenOffset), args) == -1) {
                     GON_HTTP_PARSER_ERROR;
 		} else {
 		    gon_http_parser_prepareForNextToken(parser);
@@ -123,7 +123,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
                 ++parser->bufferOffset;
 		if(parser->tokenOffset == 0) {
                     GON_HTTP_PARSER_ERROR;
-		} else if(parser->callbacks->onRequestVersionMinor(genc_nstrtoi(parser->token, parser->tokenOffset), args) == -1) {
+		} else if(parser->callbacks->onRequestVersionMinor(genc_nStrToInt(parser->token, parser->tokenOffset), args) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 } else
                     parser->state = GON_HTTP_PARSER_HEADER_FIELD_BEGIN;
@@ -221,7 +221,7 @@ int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void
                 if(parser->callbacks->onRequestContentLength(parser->token, parser->tokenOffset, args) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 }
-                if((parser->bodyRemainder = genc_nstrtoi(parser->token, parser->tokenOffset)) == -1) {
+                if((parser->bodyRemainder = genc_nStrToInt(parser->token, parser->tokenOffset)) == -1) {
                     GON_HTTP_PARSER_ERROR;
                 }
                 if(parser->bodyBufferCapacity < parser->bodyRemainder) {
