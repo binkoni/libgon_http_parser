@@ -1,4 +1,5 @@
 image: dock0/arch
+
 before_script:
   - pacman -S --noconfirm cmake gcc make cmocka jansson lua
   - mkdir deps
@@ -13,6 +14,7 @@ before_script:
   - make install
   - cd ../../
   - cd ../
+  
 build:
   stage: build
   script: 
