@@ -60,6 +60,22 @@ struct gon_http_parser_callbacks {
     int (*onRequestBodyFinish)(void* args[]);
 };
 
+#define GON_HTTP_PARSER_CALLBACKS_SET(callbacks, prefix)              \
+(callbacks)->onRequestStart = prefix##onRequestStart;                 \
+(callbacks)->onRequestMethod = prefix##onRequestMethod;               \
+(callbacks)->onRequestUri = prefix##onRequestUri;                     \
+(callbacks)->onRequestVersionMajor = prefix##onRequestVersionMajor;   \
+(callbacks)->onRequestVersionMinor = prefix##onRequestVersionMinor;   \
+(callbacks)->onRequestScriptPath = prefix##onRequestScriptPath;       \
+(callbacks)->onRequestContentType = prefix##onRequestContentType;     \
+(callbacks)->onRequestContentLength = prefix##onRequestContentLength; \
+(callbacks)->onRequestHeaderField = prefix##onRequestHeaderField;     \
+(callbacks)->onRequestHeaderValue = prefix##onRequestHeaderValue;     \
+(callbacks)->onRequestHeadersFinish = prefix##onRequestHeadersFinish; \
+(callbacks)->onRequestBodyStart = prefix##onRequestBodyStart;         \
+(callbacks)->onRequestBody = prefix##onRequestBody;                   \
+(callbacks)->onRequestBodyFinish = prefix##onRequestBodyFinsih;       \
+
 static inline int gon_http_parser_init(struct gon_http_parser* parser, size_t headerBufferCapacity, size_t bodyBufferCapacity) {
     parser->state = GON_HTTP_PARSER_HEADERS_BEGIN;
     parser->headerBufferCapacity = headerBufferCapacity;
