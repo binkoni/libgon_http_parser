@@ -60,7 +60,7 @@ struct gon_http_parser_callbacks {
     int (*onRequestBodyFinish)(void* args[]);
 };
 
-#define GON_HTTP_PARSER_CALLBACKS_SET(callbacks, prefix)              \
+#define GON_HTTP_PARSER_CALLBACKS_INIT(callbacks, prefix)              \
 (callbacks)->onRequestStart = prefix##onRequestStart;                 \
 (callbacks)->onRequestMethod = prefix##onRequestMethod;               \
 (callbacks)->onRequestUri = prefix##onRequestUri;                     \
