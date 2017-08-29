@@ -78,7 +78,11 @@ struct gon_http_parser_callbacks {
 
 /**
  * @brief
- * Macro that helps the parser callbacks struct to be initialized.
+ * Macro that helps initializing the parser callbacks struct.
+ * @param callbacks
+ * Pointer of struct gon_http_parser_callbacks.
+ * @param prefix
+ * Common prefix of callback function names.
  */
 
 #define GON_HTTP_PARSER_CALLBACKS_INIT(callbacks, prefix)             \
@@ -145,8 +149,47 @@ static inline int gon_http_parser_reset(struct gon_http_parser* parser) {
     return 0;
 }
 
+/**
+ * @brief
+ * Get current buffer position.
+ * @details
+ * Use this function like this:
+ * @code
+ * read(fd, gon_http_parser_getBufferPosition(parser), gon_http_parser_getAvailableBufferSize(parser));
+ * @endcode
+ * @param parser
+ * Pointer of HTTP parser.
+ * @returns
+ * Pointer of current buffer position.
+ */
+
 char* gon_http_parser_getBufferPosition(struct gon_http_parser* parser);
+
+/**
+ * @brief
+ * Get currently available buffer size.
+ * @details
+ * Use this function like this:
+ * @code
+ * read(fd, gon_http_parser_getBufferPosition(parser), gon_http_parser_getAvailableBufferSize(parser));
+ * @endcode
+ * @param parser
+ * Pointer of HTTP parser.
+ * @returns
+ * Available buffer size.
+ */
+
 size_t gon_http_parser_getAvailableBufferSize(struct gon_http_parser* parser);
+
+/**
+ * @brief
+ * Parse the data in the buffer.
+ * @param readSize
+ * Size of last read data.
+ * @param args
+ * Any type of data that you want to pass to every callback functions.
+ */
+
 int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void* args[]);
 
 #endif
