@@ -4,10 +4,13 @@
 #include <cmocka.h>
 
 #include <fcntl.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <gon_http_parser.h>
+#include <err.h>
+#include <stdio.h>
 
 static int test_onRequestStart(void* args[]) {
 }
