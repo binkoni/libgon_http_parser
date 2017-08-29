@@ -111,8 +111,10 @@ struct gon_http_parser_callbacks {
  * @param bodyBufferCapacity
  * Capacity of HTTP body buffer.
  * @returns
- * If the initialization was successful, returns 0, otherwise -1.
+ * 0: Initialization was successful
+ * 1: Initialization was not successful
  */
+
 
 static inline int gon_http_parser_init(struct gon_http_parser* parser, size_t headerBufferCapacity, size_t bodyBufferCapacity) {
     parser->state = GON_HTTP_PARSER_HEADERS_BEGIN;
@@ -136,7 +138,8 @@ static inline int gon_http_parser_init(struct gon_http_parser* parser, size_t he
  * @param parser
  * Pointer of HTTP parser.
  * @returns
- * If the reset was successful, returns 0, otherwise -1.
+ * -1: Reset was not successful
+ * 0: Reset was successful
  */
 
 static inline int gon_http_parser_reset(struct gon_http_parser* parser) {
@@ -188,6 +191,10 @@ size_t gon_http_parser_getAvailableBufferSize(struct gon_http_parser* parser);
  * Size of last read data.
  * @param args
  * Any type of data that you want to pass to every callback functions.
+ * @returns
+ * -1: Failed to parse the data.
+ *  0: Parsing is finished.
+ *  1: Needs more data to finish parsing.
  */
 
 int gon_http_parser_parse(struct gon_http_parser* parser, ssize_t readSize, void* args[]);
