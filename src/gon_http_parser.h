@@ -4,6 +4,12 @@
 #include <limits.h>
 #include <stdbool.h>
 
+/**
+ * @file gon_http_parser.h
+ * @author Byeonggon Lee
+ * @brief This file contains functions and structs for libgon_http_parser
+ */
+
 enum gon_http_parser_state {
     GON_HTTP_PARSER_HEADERS_BEGIN,
     GON_HTTP_PARSER_METHOD,
@@ -30,6 +36,11 @@ enum gon_http_parser_state {
     GON_HTTP_PARSER_BODY,
 };
 
+/**
+ * @brief
+ * HTTP parser struct.
+ */
+
 struct gon_http_parser {
     enum gon_http_parser_state state;
     size_t headerBufferCapacity;
@@ -42,6 +53,11 @@ struct gon_http_parser {
     ssize_t bodyRemainder;
     struct gon_http_parser_callbacks* callbacks;
 };
+
+/**
+ * @brief
+ * Parser callbacks struct.
+ */
 
 struct gon_http_parser_callbacks {
     int (*onRequestStart)(void* args[]);
@@ -60,7 +76,12 @@ struct gon_http_parser_callbacks {
     int (*onRequestBodyFinish)(void* args[]);
 };
 
-#define GON_HTTP_PARSER_CALLBACKS_INIT(callbacks, prefix)              \
+/**
+ * @brief
+ * Macro that helps the parser callbacks struct to be initialized.
+ */
+
+#define GON_HTTP_PARSER_CALLBACKS_INIT(callbacks, prefix)             \
 (callbacks)->onRequestStart = prefix##onRequestStart;                 \
 (callbacks)->onRequestMethod = prefix##onRequestMethod;               \
 (callbacks)->onRequestUri = prefix##onRequestUri;                     \
@@ -76,6 +97,19 @@ struct gon_http_parser_callbacks {
 (callbacks)->onRequestBody = prefix##onRequestBody;                   \
 (callbacks)->onRequestBodyFinish = prefix##onRequestBodyFinsih;       \
 
+/**
+ * @brief
+ * Initialize HTTP parser struct.
+ * @param parser
+ * Pointer of HTTP parser.
+ * @param headerBufferCapacity
+ * Capacity of HTTP header buffer.
+ * @param bodyBufferCapacity
+ * Capacity of HTTP body buffer.
+ * @returns
+ * If the initialization was successful, returns 0, otherwise -1.
+ */
+
 static inline int gon_http_parser_init(struct gon_http_parser* parser, size_t headerBufferCapacity, size_t bodyBufferCapacity) {
     parser->state = GON_HTTP_PARSER_HEADERS_BEGIN;
     parser->headerBufferCapacity = headerBufferCapacity;
@@ -88,6 +122,18 @@ static inline int gon_http_parser_init(struct gon_http_parser* parser, size_t he
     parser->bodyRemainder = 0;
     return 0;
 }
+
+/**
+ * @brief
+ * Reset HTTP Parser struct.
+ * @details
+ * Reset parser state to the start state, reset all internal offsets.
+ * Useful when HTTP connection is keep-alive.
+ * @param parser
+ * Pointer of HTTP parser.
+ * @returns
+ * If the reset was successful, returns 0, otherwise -1.
+ */
 
 static inline int gon_http_parser_reset(struct gon_http_parser* parser) {
     parser->state = GON_HTTP_PARSER_HEADERS_BEGIN;
