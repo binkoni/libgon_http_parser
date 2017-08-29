@@ -99,7 +99,7 @@ struct gon_http_parser_callbacks {
 (callbacks)->onRequestHeadersFinish = prefix##onRequestHeadersFinish; \
 (callbacks)->onRequestBodyStart = prefix##onRequestBodyStart;         \
 (callbacks)->onRequestBody = prefix##onRequestBody;                   \
-(callbacks)->onRequestBodyFinish = prefix##onRequestBodyFinsih;       \
+(callbacks)->onRequestBodyFinish = prefix##onRequestBodyFinish        \
 
 /**
  * @brief
