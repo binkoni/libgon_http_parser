@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <gon_http_parser.h>
+#include "../src/gon_http_parser.h"
 #include <err.h>
 #include <stdio.h>
 
