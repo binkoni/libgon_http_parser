@@ -1,0 +1,19 @@
+GET / HTTP/1.1
+
+Host: gonapps.com
+
+Connection: keep-alive
+
+Upgrade-Insecure-Requests: 1
+
+User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36
+
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+
+Accept-Encoding: gzip, deflate, br
+
+Accept-Language: ko-KR,ko;q=0.8,en-US;q=0.6,en;q=0.4
+
+Cookie: _gh_sess=eyJzZXNzaW9uX2lkIjoiNWJmYzIwOGMwMzUwMWI5ZGNkZGQ4YzBjZjljM2I5MjciLCJsYXN0X3JlYWRfZnJvbV9yZXBsaWNhcyI6MTUwNDI2MDczMTkzMSwiX2NzcmZfdG9rZW4iOiJVelFYZDRWaGNSeVpYK3diQmI4MENtTWtSME1RK3ZDYW1Jd3AzWHF2aFVJPSJ9--cb1afd45c6c1a653844c9aae0403c2154b43e872; _octo=GH1.1.484395276.1504260780; _ga=GA1.2.1132422680.1504260780; tz=Asia%2FSeoul
+
+

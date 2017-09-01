@@ -60,7 +60,7 @@ void gon_http_parser_test(void** state) {
     struct gon_http_parser* parser = malloc(sizeof(struct gon_http_parser));
     gon_http_parser_init(parser, 1024 * 1024, 1024 * 1024);
     parser->callbacks = callbacks;
-    int inputFd = open("input0.text", O_RDONLY);
+    int inputFd = open("input1.text", O_RDONLY);
     assert_int_not_equal(inputFd, -1);
     int readSize;
     while((readSize = read(inputFd, gon_http_parser_getBufferPosition(parser), gon_http_parser_getAvailableBufferSize(parser))) > 0) {
