@@ -7,6 +7,9 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
 #include <unistd.h>
 #include "../src/gon_http_parser.h"
 #include <err.h>
@@ -60,16 +63,26 @@ void gon_http_parser_test(void** state) {
     struct gon_http_parser* parser = malloc(sizeof(struct gon_http_parser));
     gon_http_parser_init(parser, 1024 * 1024, 1024 * 1024);
     parser->callbacks = callbacks;
-    int inputFd = open("input1.text", O_RDONLY);
-    assert_int_not_equal(inputFd, -1);
-    int readSize;
-    while((readSize = read(inputFd, gon_http_parser_getBufferPosition(parser), gon_http_parser_getAvailableBufferSize(parser))) > 0) {
-        int result = gon_http_parser_parse(parser, readSize, (void*[]){NULL});
-        assert_int_not_equal(result, -1);
-        if(result == 0)
-            break;
+
+    DIR* directory = opendir(".");
+    struct dirent* dirent;
+    while((dirent = readdir(directory)) != NULL) {
+        if(strncmp("input", dirent->d_name, sizeof("input") - 1) == 0) {
+            int inputFd = open(dirent->d_name, O_RDONLY);
+            //warnx("opened %s", dirent->d_name);
+            assert_int_not_equal(inputFd, -1);
+            int readSize;
+            while((readSize = read(inputFd, gon_http_parser_getBufferPosition(parser), gon_http_parser_getAvailableBufferSize(parser))) > 0) {
+                int result = gon_http_parser_parse(parser, readSize, (void*[]){NULL});
+                assert_int_not_equal(result, -1);
+                if(result == 0)
+                    break;
+            }
+            close(inputFd);
+            gon_http_parser_reset(parser);
+        }
     }
-    close(inputFd);
+    closedir(directory);
     free(callbacks);
     free(parser);
 }
